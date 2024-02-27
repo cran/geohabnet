@@ -25,7 +25,7 @@ get_parameters <- function(out_path = tempdir(), iwindow = FALSE) {
 
   params_file_path <- .param_fp()
   .copy_file(params_file_path, out_path)
-  message("parameters fetched successfully")
+  .showmsg("parameters fetched successfully")
   return(file.path(paste(out_path, basename(params_file_path), sep = "/")))
 }
 
@@ -84,11 +84,10 @@ load_parameters <- function(filepath = .param_fp()) {
 #' If not present it will result default value.
 #' @return Numeric. Resolution from `parameters.yaml`. Default is 24.
 #' @export
-#' @seealso [set_reso()]
 reso <- function() {
-  reso <- the$parameters_config$`CCRI parameters`$Resolution
+  reso <- load_parameters()$Resolution
   reso <- if (is.null(reso) || is.na(reso)) {
-    24
+    12
   } else {
     reso
   }
@@ -109,24 +108,45 @@ reset_params <- function() {
   return(TRUE)
 }
 
-#' Set resolution value
+#' Dispersal kernels
 #'
-#' Set `resolution` to be used in analysis.
-#' It doesn't modify the `parameters.yaml`
-#' but instead a currently loaded instance of it.
-#' Must be greater than 0 and less than or equal to 48.
+#' -`[inv_powerlaw()]` Get parameters and values pertaining to the inverse power law model.
+#' -`[neg_exp()]` Get parameters and values pertaining to the negative exponential model.
 #'
-#' @param value numeric. Resolution value.
-#' @return Invisible TRUE
+#' @param params Object.[load_parameters()] by default.
+#' @return List with parameters and values. See details.
+#' @details
+#' The list object has following values used in running analysis
+#' -`beta` Parameter for calculating the inverse power law.
+#' -`gamma` Parameter for calculating the negative exponential.
+#' -`metrics` Each of these metrics is applied to the adjacency matrix produced in the intermediate step.
+#' -`cutoff` Currently used as a parameter to calculate centrality in the network - [betweeness()] and [closeness()].
+#' As defined in [igraph::betweenness()], it's the maximum length to consider when calculating centrality.
+#' If zero or negative, then there is no such limit.
+#'
+#' @seealso [supported_metrics()]
+#' @references Csardi G, Nepusz T (2006).
+#' “The igraph software package for complex network research.” _InterJournal_, *Complex Systems*, 1695.
+#' <https://igraph.org>.
+#' @references Csárdi G, Nepusz T, Traag V, Horvát Sz, Zanini F, Noom D, Müller K (2024).
+#' _igraph: Network Analysis and Visualization in R_.
+#' \doi{10.5281/zenodo.7682609},
+#' R package version 1.5.1, <https://CRAN.R-project.org/package=igraph>.
 #' @export
-#' @examples
-#' set_reso(24)
-#'
-set_reso <- function(value) {
-  stopifnot("Invalid resolution" = is.numeric(value), value >= 0, value <= 48)
-  .loadparam_ifnull()
-  the$parameters_config$`CCRI parameters`$Resolution <- value
-  invisible(TRUE)
+#' @rdname Dispersal-kernels
+inv_powerlaw <- function(params = load_parameters()) {
+  return(list(beta = params$`CCRI parameters`$DispersalKernelModels$InversePowerLaw$beta,
+              metrics = params$`CCRI parameters`$NetworkMetrics$InversePowerLaw$metrics,
+              weights = params$`CCRI parameters`$NetworkMetrics$InversePowerLaw$weights,
+              cutoff = as.numeric(params$`CCRI parameters`$NetworkMetrics$InversePowerLaw$cutoff)))
+}
+
+#' @rdname Dispersal-kernels
+neg_exp <- function(params = load_parameters()) {
+  return(list(gamma = params$`CCRI parameters`$DispersalKernelModels$NegativeExponential$gamma,
+              metrics = params$`CCRI parameters`$NetworkMetrics$NegativeExponential$metrics,
+              weights = params$`CCRI parameters`$NetworkMetrics$NegativeExponential$weights,
+              cutoff = as.numeric(params$`CCRI parameters`$NetworkMetrics$NegativeExponential$cutoff)))
 }
 
 .param_fp <- function() {

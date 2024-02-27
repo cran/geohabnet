@@ -2,34 +2,54 @@
 % Please edit documentation in R/sean.R
 \name{sensitivity_analysis}
 \alias{sensitivity_analysis}
-\title{Calculate sensitivity analysis on parameters}
+\title{Sensitivity analysis for habitat connectivity}
 \usage{
 sensitivity_analysis(maps = TRUE, alert = TRUE)
 }
 \arguments{
-\item{maps}{logical. \code{TRUE} if maps are to be plotted, \code{FALSE} otherwise}
+\item{maps}{logical. \code{TRUE} if maps of outcomes are to be plotted, \code{FALSE} otherwise.
+If \code{TRUE}, three maps are possible: a map of mean habitat connectivity, a map of variance of habitat connectivity,
+and a map of the difference between the ranks in habitat connectivity and habitat density.}
 
-\item{alert}{logical. \code{TRUE} if beep sound is to be played, \code{FALSE} otherwise}
+\item{alert}{logical. \code{TRUE} if a beep sound is to be played once the analysis is completed, \code{FALSE} otherwise}
 }
 \value{
-logical. \code{TRUE} if analysis is completed, \code{FALSE} otherwise.
+GeoNetwork.
 Errors are not handled.
 }
 \description{
-This function runs sensitivity analysis on parameters based on
-parameters provided through \code{\link[=set_parameters]{set_parameters()}}.
-It can be used as an entry point for CCRI.
-By default, it runs analysis on global sclaes\code{\link[=global_scales]{global_scales()}}.
-After analysis is complete,
-it will suppress maps for outcomes if \code{maps = FALSE} or
+This function runs a sensitivity analysis on habitat connectivity
+calculated based on every combination of selected parameters.
+Parameter values in \code{\link[=sensitivity_analysis]{sensitivity_analysis()}} should be provided using the function \code{\link[=set_parameters]{set_parameters()}}.
+If no parameters are provided, then the \code{\link[=sensitivity_analysis]{sensitivity_analysis()}} function will run the sensitivity analysis
+using a default set of parameter values,
+which is accessible through the function \code{\link[=get_parameters]{get_parameters()}}.
+To customize parameter values, open the parameters.yaml
+that was automatically downloaded when geohabnet was installed,
+change, remove, or add parameter values directly in the parameters.yaml and save it.
+Once the values have been changed manually, run \code{\link[=set_parameters]{set_parameters()}} to set the new parameter values,
+which will return TRUE if the parameters were set successfully.
+}
+\details{
+For each location in a region, sensitivity_analysis()
+calculates the habitat connectivity risk index (CCRI) proposed by Xing et al. (2021).
+By default, sensitivity_analysis() runs a sensitivity analysis on a global extent,
+see \code{\link[=global_scales]{global_scales()}} for details.
+This function also plots maps of the outcomes automatically,
+but it will suppress maps for outcomes if \code{maps = FALSE} or
 \code{\link[=interactive]{interactive()}} is \code{FALSE}.
+The returned object is of class \code{GeoNetwork}, which contains two types of outcomes.
+One outcome type corresponds to spatRasters representing the maps of habitat connectivity.
+The second type corresponds to adjacency matrices used to calculate the habitat connectivity,
+where columns and rows represent locations in the maps and
+entries are the relative likelihood of pathogen or pest movement between each pair of nodes.
 }
 \examples{
 \donttest{
 # Run analysis on specified parameters.yaml
-sensitivity_analysis()
-sensitivity_analysis(FALSE, FALSE)
-sensitivity_analysis(TRUE, FALSE)
+ss1 <- sensitivity_analysis()
+ss2 <- sensitivity_analysis(FALSE, FALSE)
+ss3 <- sensitivity_analysis(TRUE, FALSE)
 }
 }
 \references{
@@ -37,7 +57,7 @@ Yanru Xing, John F Hernandez Nopsa, Kelsey F Andersen, Jorge L Andrade-Piedra, F
 Guy Blomme, Mónica Carvajal-Yepes, Danny L Coyne, Wilmer J Cuellar, Gregory A Forbes,
 Jan F Kreuze, Jürgen Kroschel, P Lava Kumar, James P Legg, Monica Parker, Elmar Schulte-Geldermann,
 Kalpana Sharma, Karen A Garrett,
-\emph{Global Cropland Connectivity: A Risk Factor for Invasion and Saturation by Emerging Pathogens and Pests},
+\emph{Global Cropland .connectivity: A Risk Factor for Invasion and Saturation by Emerging Pathogens and Pests},
 BioScience, Volume 70, Issue 9, September 2020, Pages 744–758,
 \doi{10.1093/biosci/biaa067}
 

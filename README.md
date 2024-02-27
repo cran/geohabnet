@@ -3,8 +3,8 @@
 <!-- badges: start -->
 
 [<img
-src="https://github.com/GarrettLab/CroplandConnectivity/actions/workflows/pages/pages-build-deployment/badge.svg?branch=main"
-width="250" height="25" alt="Github Pages" />](https://github.com/GarrettLab/CroplandConnectivity/actions/workflows/pages/pages-build-deployment)
+src="https://github.com/GarrettLab/HabitatConnectivity/actions/workflows/pages/pages-build-deployment/badge.svg?branch=main"
+width="250" height="25" alt="Github Pages" />](https://github.com/GarrettLab/HabitatConnectivity/actions/workflows/pages/pages-build-deployment)
 [<img src="https://www.r-pkg.org/badges/version/geohabnet" width="100"
 height="25" alt="CRAN status" />](https://CRAN.R-project.org/package=geohabnet)
 
@@ -15,12 +15,12 @@ height="25" alt="CRAN status" />](https://CRAN.R-project.org/package=geohabnet)
 This package is expanded upon [Xing et al
 (2021)](https://academic.oup.com/bioscience/article/70/9/744/5875255).
 It add capabilities to customize parameter values using functions and
-see results of cropland connectivity risk index in the form of plots.
-The goal of `geohabnet` is to enable users to visualize cropland
-connectivity risk index using their own parameter values. The risk
-analysis includes 3 maps -
+see results of habitat connectivity risk index in the form of plots. The
+goal of `geohabnet` is to enable users to visualize habitat connectivity
+risk index using their own parameter values. The risk analysis includes
+3 maps -
 
-1.  Mean cropland connectivity
+1.  Mean habitat connectivity
 
 2.  Difference
 
@@ -42,26 +42,17 @@ Package can either be installed from CRAN:
 
 ``` r
 install.packages("geohabnet")
-#> Installing package into '/private/var/folders/r5/zggvft9d3yn5kh51wqp78rd00000gn/T/RtmpgAVmQR/temp_libpath15ebc6703a975'
-#> (as 'lib' is unspecified)
-#> installing the source package 'geohabnet'
 ```
 
 or the source version of package can be installed from
-[GitHub](https://github.com/GarrettLab/CroplandConnectivity/tree/main/geohabnet)
-with:
+[GitHub](https://github.com/GarrettLab/HabitatConnectivity/) with:
 
 ``` r
 if (!require("devtools")) {
   install.packages("devtools")
 }
-#> Loading required package: devtools
-#> Loading required package: usethis
 
-devtools::install_github("GarrettLab/CroplandConnectivity", subdir = "geohabnet")
-#> Downloading GitHub repo GarrettLab/CroplandConnectivity@HEAD
-#> Error in utils::download.file(url, path, method = method, quiet = quiet,  : 
-#>   download from 'https://api.github.com/repos/GarrettLab/CroplandConnectivity/tarball/HEAD' failed
+devtools::install_github("GarrettLab/HabitatConnectivity", subdir = "geohabnet")
 ```
 
 ## geohabnet Example
@@ -70,7 +61,6 @@ devtools::install_github("GarrettLab/CroplandConnectivity", subdir = "geohabnet"
 library(geohabnet)
 
 param_file <- geohabnet::get_parameters()
-#> parameters fetched successfully
 # now edit the file
 geohabnet::set_parameters(new_params = param_file)
 #> [1] TRUE
@@ -90,5 +80,5 @@ scales are present in `global_scales()` .
 Refer to help using ?*geohabnet::fun* or *help(geohabnet::fun)*
 
 Refer to article [*Analyzing risk index using cropland
-connectivity*](https://garrettlab.github.io/CroplandConnectivity/articles/analysis.html)
+connectivity*](https://garrettlab.github.io/HabitatConnectivity/articles/analysis.html)
 for more elaborate description and usages of functions in this package.

@@ -2,43 +2,36 @@
 % Please edit documentation in R/sean.R
 \name{sa_onrasters}
 \alias{sa_onrasters}
-\title{Run senstivity analysis}
+\alias{msean_onrast}
+\title{Run sensitivity analysis}
 \usage{
-sa_onrasters(
-  rast,
+sa_onrasters(rast, link_thresholds = c(0), hd_thresholds = c(0), ...)
+
+msean_onrast(
   global = TRUE,
-  geoscale,
-  link_thresholds,
-  host_density_thresholds,
-  agg_methods = c("sum", "mean"),
-  dist_method = "geodesic",
+  geoscale = NULL,
   res = reso(),
-  maps = TRUE,
-  outdir = tempdir()
+  outdir = tempdir(),
+  ...
 )
 }
 \arguments{
 \item{rast}{Raster object which will be used in analysis.}
 
+\item{link_thresholds}{Numeric vector. link threshold values}
+
+\item{hd_thresholds}{Numeric vector. host density threshold values}
+
+\item{...}{Additional parameters to be passed to \code{\link[=sean]{sean()}}.}
+
 \item{global}{Logical. \code{TRUE} if global analysis, \code{FALSE} otherwise.
 Default is \code{TRUE}}
 
-\item{geoscale}{Vector. Geographical coordinates
-in the form of c(Xmin, Xmax, Ymin, Ymax)}
+\item{geoscale}{Numeric vector. Geographical coordinates
+in the form of c(Xmin, Xmax, Ymin, Ymax) which EPSG:4326 in coordinate reference system. If \code{geoscale} is NuLL,
+the extent is extracted from \code{rast}(SpatRaster) using \code{\link[terra:ext]{terra::ext()}}.}
 
-\item{link_thresholds}{vector. link threshold values}
-
-\item{host_density_thresholds}{vector. host density threshold values}
-
-\item{agg_methods}{vector. Aggregation methods}
-
-\item{dist_method}{character. One of the values from \code{\link[=dist_methods]{dist_methods()}}}
-
-\item{res}{numeric.
-resolution at which operations will run.
-Default is \code{\link[=reso]{reso()}}}
-
-\item{maps}{logical. \code{TRUE} if maps are to be plotted, \code{FALSE} otherwise}
+\item{res}{Numeric. Resolution of the raster. Default is \code{\link[=reso]{reso()}}.}
 
 \item{outdir}{Character. Output directory for saving raster in TIFF format.
 Default is \code{\link[=tempdir]{tempdir()}}.}
@@ -50,10 +43,15 @@ One combination is equivalent to \code{\link[=sean]{sean()}} function.
 }
 \description{
 Same as \code{\link[=sensitivity_analysis]{sensitivity_analysis()}} but it takes raster object and other parameters as an input.
+\itemize{
+\item \code{sa_onrasters()} is a wrapper around \code{\link[=sean]{sean()}} function. Takes raster object and other parameters as an input.
+\item \code{msean_onrast()} same as \code{\link[=sa_onrasters]{sa_onrasters()}}. Use this for side effects + results.
+Produces and plots the maps for the outcomes and results are returned as an object.
+It produces and plots the maps for the outcomes and results are returned as an object.
+}
 }
 \details{
-When \code{global = TRUE}, \code{geo_scale} is ignored.
-Instead uses scales from \code{\link[=global_scales]{global_scales()}}.
+Error not handled for non-overlapping extents.
 }
 \examples{
 \donttest{
@@ -64,13 +62,16 @@ res1 <- sa_onrasters(rr[[1]],
             c(0.0001, 0.00004),
             c(0.0001, 0.00005),
             c("sum", "mean"),
-            res = 24)
+            res = 12)
 res2 <- sa_onrasters(rr[[1]],
             global = TRUE,
             link_thresholds = c(0.000001),
-            host_density_thresholds = c(0.00015),
+            hd_thresholds = c(0.00015),
             agg_methods = c("sum"),
-            res = 24)
+            res = 12)
+res3 <- msean_onrast(rast = rr[[1]],
+          link_thresholds = c(0.000001),
+          hd_thresholds = c(0.00015))
 }
 }
 \references{
@@ -78,7 +79,7 @@ Yanru Xing, John F Hernandez Nopsa, Kelsey F Andersen, Jorge L Andrade-Piedra, F
 Guy Blomme, Mónica Carvajal-Yepes, Danny L Coyne, Wilmer J Cuellar, Gregory A Forbes,
 Jan F Kreuze, Jürgen Kroschel, P Lava Kumar, James P Legg, Monica Parker, Elmar Schulte-Geldermann,
 Kalpana Sharma, Karen A Garrett,
-\emph{Global Cropland Connectivity: A Risk Factor for Invasion and Saturation by Emerging Pathogens and Pests},
+\emph{Global Cropland .connectivity: A Risk Factor for Invasion and Saturation by Emerging Pathogens and Pests},
 BioScience, Volume 70, Issue 9, September 2020, Pages 744–758,
 \doi{10.1093/biosci/biaa067}
 
@@ -87,4 +88,6 @@ R package version 1.7-46, \url{https://CRAN.R-project.org/package=terra}
 }
 \seealso{
 Use \code{\link[=get_rasters]{get_rasters()}} to obtain raster object.
+
+\code{\link[=msean_onrast]{msean_onrast()}} \code{\link[=supported_sources]{supported_sources()}}
 }

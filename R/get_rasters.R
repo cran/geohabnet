@@ -9,14 +9,13 @@
 #' @examples
 #' # Get default rasters
 #' \dontrun{
-#' get_rasters(list(mapspam = c("wheat"), monfreda = c("avocado"), file = "some_raster.tif"))
+#' get_rasters(list(mapspam2010 = c("wheat"), monfreda = c("avocado"), file = "some_raster.tif"))
 #' }
 #' @seealso [load_parameters()], [get_parameters()], [tiff_torast()], [cropharvest_rast()]
 get_rasters <- function(hosts) {
   t_file <- hosts[["file"]]
   rasters <- list()
-  if (!is.null(t_file) &&
-    !is.na(t_file)) {
+  if (!is.null(t_file) && !is.na(t_file)) {
     rasters <- c(rasters, tiff_torast(t_file))
   }
   rasters <- c(rasters, crops_rast(hosts))
@@ -33,20 +32,23 @@ get_rasters <- function(hosts) {
 #' If crop is present in multiple sources, then their mean is calculated.
 #' @param crop_names A named list of source along with crop names
 #' @return SpatRaster. Raster object which is sum of all the individual crop raster
+#' @seealso [cropharvest_rast()]
 #' @export
 #' @examples
 #' \donttest{
-#' crops_rast(list(monfreda = c("wheat", "barley"), mapspam = c("wheat", "potato")))
+#' crops_rast(list(monfreda = c("wheat", "barley"), mapspam2010 = c("wheat", "potato")))
 #' }
 crops_rast <- function(crop_names) {
   if (!is.list(crop_names) || length(crop_names) == 0) {
     stop("Input 'crop_names' must be a non-empty list of crop names.")
   }
 
-  # output: list("wheat" = c("monfreda", "mapspam"), "barley" = c("monfreda"), "potato" = c("mapspam"))
+  #stopifnot("Cannot merge both 2010 and 2017 Africa" = !all(mapspam() %in% names(crop_names)))
+
+  # output: list("wheat" = c("monfreda", "mapspam2010"), "barley" = c("monfreda"), "potato" = c("mapspam2010"))
   crops <- list()
 
-  for (src in get_supported_sources()) {
+  for (src in supported_sources()) {
     for (crop_name in crop_names[[src]]) {
       crops[[crop_name]] <- c(crops[[crop_name]], src)
     }
@@ -57,21 +59,25 @@ crops_rast <- function(crop_names) {
   # iterate named lists
   # crop names
   nams <- names(crops)
-  cropharvests <- list()
-  for (i in seq_along(crops)) {
-    single_crop_rasters <- list()
-    for (j in crops[[i]]) {
+  cropharvests <- future.apply::future_lapply(seq_along(crops), function(i) {
+    stopifnot("Cannot merge mapspam data for both 2010 and 2017 Africa" = !all(mapspam() %in% crops[[i]]))
+    single_crop_rasters <- lapply(crops[[i]], function(j) {
       cr <- cropharvest_rast(nams[i], j)
-      single_crop_rasters <- c(single_crop_rasters, cr)
-    }
-    len_scr <- length(single_crop_rasters)
-    if (len_scr > 1) {
-      cropharvests <- c(cropharvests, terra::app(terra::rast(single_crop_rasters), fun = sum, na.rm = TRUE) / len_scr)
-    } else {
-      cropharvests <- c(cropharvests, single_crop_rasters)
-    }
-  }
+      return(cr)
+    })
 
+    len_scr <- length(single_crop_rasters)
+    ret <- if (len_scr > 1) {
+      terra::app(terra::sds(single_crop_rasters),
+                 fun = sum,
+                 na.rm = TRUE) / len_scr
+    } else {
+      single_crop_rasters[[1]]  # Extract the single element
+    }
+    return(terra::wrap(ret))
+  }, future.seed = TRUE)
+
+  cropharvests <- lapply(cropharvests, FUN = terra::rast)
   return(Reduce("+", cropharvests))
 }
 
@@ -88,8 +94,8 @@ crops_rast <- function(crop_names) {
 #'
 cropharvest_rast <- function(crop_name, data_source) {
   # supported sources
-  sources <- get_supported_sources()
-  if (!(data_source %in% sources)) {
+  srcs <- supported_sources()
+  if (!(data_source %in% srcs)) {
     stop(paste("data source: ", data_source, " is not supported"))
   }
   cropharvest_r <- .get_cropharvest_raster_helper(crop_name = crop_name, data_source = data_source)
@@ -118,8 +124,9 @@ tiff_torast <- function(path_to_tif) {
 }
 
 .validate_tif <- function(path_to_tif) {
+  file_extension <- stringr::str_sub(path_to_tif, start = -4)
   stopifnot(
     file.exists(path_to_tif),
-    stringr::str_sub(path_to_tif, start = -4) == ".tif"
+    file_extension %in% c(".tif", ".TIF")
   )
 }

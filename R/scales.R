@@ -23,7 +23,13 @@ global_scales <- function() {
 }
 
 .global_ext <- function(scales = global_scales()) {
-  return(scales[[STR_EAST]] + scales[[STR_WEST]])
+  # xmin, xmax, ymin, ymax
+  xmin <- min(scales[[STR_EAST]][1], scales[[STR_WEST]][1])
+  xmax <- max(scales[[STR_EAST]][2], scales[[STR_WEST]][2])
+  ymin <- min(scales[[STR_EAST]][3], scales[[STR_WEST]][3])
+  ymax <- max(scales[[STR_EAST]][4], scales[[STR_WEST]][4])
+
+  return(c(xmin, xmax, ymin, ymax))
 }
 
 #' Set global geographical extent
@@ -55,14 +61,21 @@ set_global_scales <- function(value) {
 #'
 #'   This function returns a list of geographical scales set in global and custom extent in `parameters.yaml`.
 #'   If `global` is `TRUE`, the `CustomExt` is ignored.
+#' @param gparams Optional. [load_parameters()] or null
 #' @return Vector. A set of geographical scales
 #' @export
-geoscale_param <- function() {
-  .loadparam_ifnull()
-  xf <- the$parameters_config$`CCRI parameters`$GeoExtent$global
-  if (as.logical(xf) == FALSE) {
-    stopifnot("Geographical missing in parameters " =
-                length(the$parameters_config$`CCRI parameters`$GeoExtent$customExt) == 4)
+geoscale_param <- function(gparams = load_parameters()) {
+
+  cparams <- if (is.null(gparams)) {
+    load_parameters()
+  } else {
+    gparams
   }
-  return(as.vector(the$parameters_config$`CCRI parameters`$GeoExtent$customExt))
+  xf <- cparams$`CCRI parameters`$GeoExtent$global
+  if (as.logical(xf) == FALSE) {
+    if (length(cparams$`CCRI parameters`$GeoExtent$customExt) != 4) {
+      .showmsg("Geographical scale is missing in parameters. Will use extent of host density(SpatRaster)")
+    }
+  }
+  return(as.vector(cparams$`CCRI parameters`$GeoExtent$customExt))
 }
