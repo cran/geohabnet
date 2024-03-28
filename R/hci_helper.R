@@ -176,6 +176,7 @@ risk_indices <- function(ri) {
 
   .utilrast <<- memoise::memoise(.utilrast)
   .cal_mgb <<- memoise::memoise(.cal_mgb)
+  #.apply_agg <<- memoise::memoise(.apply_agg)
 }
 
 .get_helper_filepath <- function(file_type) {
@@ -347,14 +348,14 @@ supported_sources <- function() {
 }
 
 #' Supported sources for monfreda
-#'
+#' 
 #' @export
 monfreda <- function() {
   return(c("monfreda"))
 }
 
 #' Supported sources for Mapspam
-#'
+#' 
 #' @export
 mapspam <- function() {
   return(c("mapspam2010", "mapspam2017Africa"))
@@ -363,7 +364,7 @@ mapspam <- function() {
 #' Search for crop
 #'
 #' It returns the dataset sources in which crop data is available.
-#' It's a wrapper around [geodata::spamCrops()] and [geodata::monfredaCrops()]
+#' Essentially, a wrapper around [geodata::spamCrops()] and [geodata::monfredaCrops()]
 #' @param name name of crop
 #' @return Logical. Sources iin crop data is available.
 #' @export

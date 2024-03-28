@@ -154,5 +154,4 @@ final@rasters$global_rast[[1]]$east[[1]] # this is also s4 class 'GeoModel'
 #  
 #  future::plan(future::multisession())
 #  msean(avocado)
-#  
 
