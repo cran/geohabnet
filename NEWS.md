@@ -1,3 +1,6 @@
+# geohabnet 2.1.1
+- Removed dependency with Amazon S3
+
 # geohabnet 2.1.0
 - Dispersal kernels can now either be Inverse Power Law or Exponential or both
 - Renamed CCRI to HCI
