@@ -1,6 +1,6 @@
 Package: geohabnet
 Title: Geographical Risk Analysis Based on Habitat Connectivity
-Version: 2.1.1
+Version: 2.1.2
 Date: 2024-04-05
 Authors@R: c(
     person("Krishna", "Keshav", , "kkeshav@ufl.edu", role = c("aut", "cre")),
@@ -47,7 +47,7 @@ URL: https://garrettlab.github.io/HabitatConnectivity/,
 BugReports: https://github.com/GarrettLab/HabitatConnectivity/issues
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2024-04-05 21:06:58 UTC; kkeshav
+Packaged: 2024-04-08 11:01:33 UTC; kkeshav
 Author: Krishna Keshav [aut, cre],
   Aaron Plex [aut] (<https://orcid.org/0000-0001-7317-3090>),
   Garrett Lab [ctb] (https://garrettlab.com),
@@ -55,4 +55,4 @@ Author: Krishna Keshav [aut, cre],
   University of Florida [cph, fnd] (https://www.ufl.edu)
 Maintainer: Krishna Keshav <kkeshav@ufl.edu>
 Repository: CRAN
-Date/Publication: 2024-04-05 21:33:00 UTC
+Date/Publication: 2024-04-08 13:22:50 UTC
