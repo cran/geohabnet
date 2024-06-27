@@ -2,10 +2,62 @@
 #'
 #' @description
 #' A ref class to represent results of dispersal models.
-#' @field matrix An adjacency matrix to represent network.
-.model_ob <- setRefClass("GeoModel",
-                         fields = list(amatrix = "matrix",
-                                       index = "ANY"))
+#'
+#' @slot amatrix An adjacency matrix to represent network.
+#' @slot index A raster object representing the index.
+#' @slot hdthreshold A numeric value representing the threshold.
+#' @slot aggregation A character value representing the aggregation method.
+#' @slot linkthreshold A numeric value representing the link threshold.
+#' @slot beta A numeric value representing the beta parameter.
+#' @slot gamma A numeric value representing the gamma parameter.
+.model_ob <- setClass("GeoModel",
+                      slots = c(amatrix = "matrix",
+                                index = "ANY",
+                                hdthreshold = "numeric",
+                                aggregation = "character",
+                                linkthreshold = "numeric",
+                                beta = "numeric",
+                                gamma = "numeric"),
+                      prototype = list(beta = NaN,
+                                       gamma = NaN))
+
+#' Set properties of the GeoModel object.
+#' 
+#' @param x The GeoModel object.
+#' @param aggregation Character. A value representing the aggregation method.
+#' @param hdthreshold Numeric. A value representing the host density threshold.
+#' @param linkthreshold Numeric. A value representing the link threshold in a network.
+#' @return The GeoModel object with updated properties.
+#' @export
+setGeneric("setprops", function(x, aggregation, hdthreshold, linkthreshold) {
+  standardGeneric("setprops")
+})
+
+#' Set properties of the GeoModel object.
+#' 
+#' @param x The GeoModel object.
+#' @param aggregation Character. A value representing the aggregation method.
+#' @param hdthreshold Numeric. A value representing the host density threshold.
+#' @param linkthreshold Numeric. A value representing the link threshold in a network.
+#' @return The GeoModel object with updated properties.
+#' @export
+setMethod("setprops",
+          signature(x = "GeoModel",
+                    aggregation = "character",
+                    hdthreshold = "numeric",
+                    linkthreshold = "numeric"),
+          function(x,
+                   aggregation,
+                   hdthreshold,
+                   linkthreshold) {
+
+            x@aggregation <- aggregation
+            x@hdthreshold <- hdthreshold
+            x@linkthreshold <- linkthreshold
+
+            return(x)
+          }
+)
 
 # private methods ---------------------------------------------------------
 
@@ -65,7 +117,10 @@
                                                      cropdistancematrix,
                                                      cutoff)
   indexv <- terra::wrap(indexpre)
-  return(.model_ob(index = indexv, amatrix = adjmat))
+  return(.model_ob(index = indexv,
+                   amatrix = adjmat,
+                   linkthreshold = link_threshold,
+                   beta = beta))
 }
 
 .model_neg_exp <- function(gamma_val,
@@ -117,7 +172,10 @@
                                                      cropdistancematrix,
                                                      cutoff)
   indexv <- terra::wrap(indexpre)
-  return(.model_ob(index = indexv, amatrix = adjmat))
+  return(.model_ob(index = indexv,
+                   amatrix = adjmat,
+                   linkthreshold = link_threshold,
+                   gamma = gamma_val))
 }
 
 .apply_met <- function(mets, we, adj_graph, cutoff) {

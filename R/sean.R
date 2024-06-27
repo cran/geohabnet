@@ -375,14 +375,19 @@ sean <- function(rast,
                                agg_method,
                                dist_method)
 
-      model_ret <- c(model_ret,
-                     .hci(link_threshold,
+      ret <- .hci(link_threshold,
                           ipl = inv_pl,
                           ne_exp = neg_exp,
                           rast = density_data$agg_crop,
                           crop_cells_above_threshold = density_data$crop_values_at,
                           thresholded_crop_values = density_data$crop_value,
-                          distance_matrix = density_data[[STR_DISTANCE_MATRIX]]))
+                          distance_matrix = density_data[[STR_DISTANCE_MATRIX]])
+
+      # mapping adjacency matrix with its parameters
+      for (model in ret) {
+        x <- setprops(model, agg_method, hd_threshold, link_threshold)
+        model_ret <- c(model_ret, x)
+      }
 
       host_densityrasts <- c(host_densityrasts, density_data$agg_crop)
     }
@@ -653,7 +658,7 @@ msean_onrast <- function(global = TRUE,
 #' Guy Blomme, Mónica Carvajal-Yepes, Danny L Coyne, Wilmer J Cuellar, Gregory A Forbes,
 #' Jan F Kreuze, Jürgen Kroschel, P Lava Kumar, James P Legg, Monica Parker, Elmar Schulte-Geldermann,
 #' Kalpana Sharma, Karen A Garrett,
-#' _Global Cropland .connectivity: A Risk Factor for Invasion and Saturation by Emerging Pathogens and Pests_,
+#' _Global Cropland connectivity: A Risk Factor for Invasion and Saturation by Emerging Pathogens and Pests_,
 #' BioScience, Volume 70, Issue 9, September 2020, Pages 744–758,
 #' \doi{10.1093/biosci/biaa067}
 #' @references Hijmans R (2023). _terra: Spatial Data Analysis_.
