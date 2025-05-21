@@ -3,10 +3,10 @@
 \docType{class}
 \name{GeoNetwork-class}
 \alias{GeoNetwork-class}
-\alias{host_density<-,GeoNetwork-method}
+\alias{habitat_density<-,GeoNetwork-method}
 \title{GeoNetwork}
 \usage{
-\S4method{host_density}{GeoNetwork}(x) <- value
+\S4method{habitat_density}{GeoNetwork}(x) <- value
 }
 \arguments{
 \item{x}{GeoNetwork.}
@@ -18,26 +18,26 @@ GeoNetwork.
 }
 \description{
 An S4 class representing a network of geographical data.
-This will wrap all the results from the risk analysis using \code{\link[=sean]{sean()}} or \code{\link[=sensitivity_analysis]{sensitivity_analysis()}}.
-This class contains the field from \code{Gmap} class which has results in the form of \code{SpatRaster} and TIFF file.
+The GeoNetwork object will wrap all the results from the habitat connectivity analysis using \code{\link[=sean]{sean()}} or \code{\link[=sensitivity_analysis]{sensitivity_analysis()}}.
+This class contains the field from \code{Gmap} class, which has results of the habitat connectivity analysis in the form of \code{SpatRaster} and TIFF file.
 }
 \section{Slots}{
 
 \describe{
 \item{\code{rasters}}{A list of \code{GeoRasters} objects.}
 
-\item{\code{host_density}}{A \code{SpatRaster} representing the host density.}
+\item{\code{habitat_density}}{A \code{SpatRaster} representing the habitat availability (or simply host density).}
 
-\item{\code{me_rast}}{A raster representing mean risk index.}
+\item{\code{me_rast}}{A raster representing mean habitat connectivity in a region.}
 
-\item{\code{me_out}}{Character. A file path to the mean risk index raster.}
+\item{\code{me_out}}{Character. A file path to where the mean habitat connectivity raster is saved.}
 
-\item{\code{diff_rast}}{A raster representing difference.}
+\item{\code{diff_rast}}{A raster representing the difference in ranks between habitat connectivity and habitat availability.}
 
-\item{\code{diff_out}}{Character. A file path to the difference raster.}
+\item{\code{diff_out}}{Character. A file path to where the difference raster is located.}
 
-\item{\code{var_rast}}{A raster representing variance.}
+\item{\code{var_rast}}{A raster representing the variance in habitat connectivity in a region.}
 
-\item{\code{var_out}}{Character. A file path to the variance raster.}
+\item{\code{var_out}}{Character. A file path to where the variance raster is located.}
 }}
 
